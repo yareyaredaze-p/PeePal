@@ -1,0 +1,124 @@
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import '../config/themes/app_theme.dart';
+
+/// Glass-styled bottom navigation bar
+/// Consistent navigation component across main screens
+class GlassBottomNavBar extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  const GlassBottomNavBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  static const List<_NavItem> _items = [
+    _NavItem(icon: Icons.home_rounded, label: 'Home'),
+    _NavItem(icon: Icons.list_rounded, label: 'List'),
+    _NavItem(icon: Icons.calendar_month_rounded, label: 'Calendar'),
+    _NavItem(icon: Icons.person_rounded, label: 'Account'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(AppTheme.spacingM),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            height: 70,
+            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppTheme.glassSurface.withValues(alpha: 0.3),
+                  AppTheme.glassSurface.withValues(alpha: 0.15),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+              border: Border.all(color: AppTheme.glassBorder, width: 1),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(
+                _items.length,
+                (index) => _NavBarItem(
+                  icon: _items[index].icon,
+                  label: _items[index].label,
+                  isSelected: currentIndex == index,
+                  onTap: () => onTap(index),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem {
+  final IconData icon;
+  final String label;
+
+  const _NavItem({required this.icon, required this.label});
+}
+
+class _NavBarItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _NavBarItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: AppTheme.animationFast,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingM,
+          vertical: AppTheme.spacingS,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.glassSurface.withValues(alpha: 0.3)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: isSelected ? AppTheme.textPrimary : AppTheme.textMuted,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: AppTheme.caption.copyWith(
+                color: isSelected ? AppTheme.textPrimary : AppTheme.textMuted,
+                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w300,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
