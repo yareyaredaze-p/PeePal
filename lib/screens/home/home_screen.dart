@@ -3,8 +3,6 @@ import '../../config/themes/app_theme.dart';
 import '../../widgets/ocean_background.dart';
 import '../../widgets/glass_container.dart';
 import '../../widgets/bottom_nav_bar.dart';
-import '../../models/pee_log.dart';
-import '../../models/hydration_recommendation.dart';
 import '../../services/pee_log_service.dart';
 import '../../services/ml_service.dart';
 import '../log/log_pee_screen.dart';
@@ -26,8 +24,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final int _currentNavIndex = 0;
-  List<PeeLog> _recentLogs = [];
-  HydrationRecommendation? _recommendation;
+  Map<String, double> _stats = {'sinceLast': 0.0, 'averageInterval': 0.0};
+  List<Map<String, dynamic>> _futureRecommendations = [];
   bool _isLoading = true;
 
   @override
@@ -40,17 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final logs = await PeeLogService.instance.getRecentLogs(
-        widget.userId,
-        limit: 5,
-      );
-      final recommendation = await MLService.instance.getRecommendation(
-        widget.userId,
-      );
+      final stats = await MLService.instance.getRecentStats(widget.userId);
+      final futureRecommendations = await MLService.instance
+          .getFutureRecommendations(widget.userId);
+
+      if (!mounted) return;
 
       setState(() {
-        _recentLogs = logs;
-        _recommendation = recommendation;
+        _stats = stats;
+        _futureRecommendations = futureRecommendations;
         _isLoading = false;
       });
     } catch (e) {
@@ -175,12 +171,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               _buildGreeting(),
                               const SizedBox(height: AppTheme.spacingL),
 
-                              // Hydration recommendation card
-                              _buildRecommendationCard(),
                               const SizedBox(height: AppTheme.spacingL),
 
-                              // Recent logs
+                              // Recent logs (now includes graph)
                               _buildRecentLogsSection(),
+                              const SizedBox(height: AppTheme.spacingL),
+
+                              // Recommended Water Intake
+                              _buildRecommendedWaterIntakeSection(),
                               const SizedBox(height: AppTheme.spacingL),
                             ],
                           ),
@@ -250,75 +248,113 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildRecommendationCard() {
-    final recommendation = _recommendation ?? HydrationRecommendation.noData();
-    final isAlert = recommendation.shouldDrinkWater;
-
-    return GlassContainer(
-      padding: const EdgeInsets.all(AppTheme.spacingL),
-      backgroundColor: isAlert
-          ? AppTheme.warning.withValues(alpha: 0.3)
-          : AppTheme.success.withValues(alpha: 0.3),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                isAlert ? Icons.water_drop : Icons.check_circle,
-                color: isAlert ? AppTheme.warning : AppTheme.success,
-                size: 28,
-              ),
-              const SizedBox(width: AppTheme.spacingS),
-              Text('Hydration Status', style: AppTheme.headingSmall),
-            ],
-          ),
-          const SizedBox(height: AppTheme.spacingM),
-          Text(recommendation.message, style: AppTheme.headingMedium),
-          const SizedBox(height: AppTheme.spacingS),
-          Text(
-            recommendation.explanation,
-            style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
-          ),
-          if (recommendation.confidence != null) ...[
-            const SizedBox(height: AppTheme.spacingS),
-            Text(
-              'Confidence: ${recommendation.confidence!.toStringAsFixed(0)}%',
-              style: AppTheme.caption,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
   Widget _buildRecentLogsSection() {
+    final sinceLast = _stats['sinceLast'] ?? 0.0;
+    final avgInterval = _stats['averageInterval'] ?? 0.0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Recent', style: AppTheme.headingSmall),
-        const SizedBox(height: 5),
-        if (_recentLogs.isEmpty)
-          GlassContainer(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AppTheme.spacingL),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.water_drop_outlined,
-                      size: 48,
-                      color: AppTheme.textMuted,
-                    ),
-                    const SizedBox(height: AppTheme.spacingM),
-                    Text(
-                      'No logs yet',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textMuted,
-                      ),
-                    ),
-                  ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Recent', style: AppTheme.headingMedium),
+            TextButton(
+              onPressed: () => _onNavTap(1),
+              child: const Text('View All'),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.spacingS),
+        GlassContainer(
+          padding: const EdgeInsets.all(AppTheme.spacingM),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildGraphItem(
+                label: 'Since Last Pee',
+                value: sinceLast,
+                displayValue: '${sinceLast.toStringAsFixed(1)} Hours',
+                maxValue: 12, // Scale bar up to 12 hours
+              ),
+              const SizedBox(height: AppTheme.spacingL),
+              _buildGraphItem(
+                label: 'Average Time between Last 10 pees',
+                value: avgInterval,
+                displayValue: '${avgInterval.toStringAsFixed(1)} Hours',
+                maxValue: 12,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGraphItem({
+    required String label,
+    required double value,
+    required String displayValue,
+    required double maxValue,
+  }) {
+    final percentage = (value / maxValue).clamp(0.0, 1.0);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTheme.caption.copyWith(color: AppTheme.textMuted),
+        ),
+        const SizedBox(height: AppTheme.spacingS),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 40,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppTheme.glassBorder, width: 1.5),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
                 ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: percentage,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.lightBlue.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingM),
+            SizedBox(
+              width: 70,
+              child: Text(
+                displayValue,
+                style: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecommendedWaterIntakeSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Recommended Water Intake', style: AppTheme.headingMedium),
+        const SizedBox(height: AppTheme.spacingM),
+        if (_futureRecommendations.isEmpty)
+          const GlassContainer(
+            padding: EdgeInsets.all(AppTheme.spacingL),
+            child: Center(
+              child: Text(
+                'Ongoing Training period',
+                style: AppTheme.bodyMedium,
               ),
             ),
           )
@@ -326,14 +362,42 @@ class _HomeScreenState extends State<HomeScreen> {
           GlassContainer(
             padding: EdgeInsets.zero,
             child: Column(
-              children: _recentLogs.asMap().entries.map((entry) {
+              children: _futureRecommendations.asMap().entries.map((entry) {
                 final index = entry.key;
-                final log = entry.value;
+                final rec = entry.value;
+                final DateTime time = rec['time'];
+                final String amount = rec['amount'];
+
                 return Column(
                   children: [
-                    _buildLogItem(log),
-                    if (index < _recentLogs.length - 1)
-                      Divider(color: AppTheme.glassBorder, height: 1),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.spacingL,
+                        vertical: AppTheme.spacingL,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Today, At ${TimeOfDay.fromDateTime(time).format(context)}',
+                            style: AppTheme.headingMedium.copyWith(
+                              fontSize: 18,
+                            ),
+                          ),
+                          Text(
+                            amount,
+                            style: AppTheme.headingMedium.copyWith(
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (index < _futureRecommendations.length - 1)
+                      Divider(
+                        color: AppTheme.glassBorder.withValues(alpha: 0.5),
+                        height: 1,
+                      ),
                   ],
                 );
               }).toList(),
@@ -341,58 +405,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
       ],
     );
-  }
-
-  Widget _buildLogItem(PeeLog log) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingM,
-        vertical: AppTheme.spacingM,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.lightBlue.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
-                ),
-                child: const Icon(
-                  Icons.water_drop,
-                  color: AppTheme.lightBlue,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingM),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('At ${log.formattedTime}', style: AppTheme.bodyMedium),
-                  Text(_formatDate(log.timestamp), style: AppTheme.caption),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final logDate = DateTime(date.year, date.month, date.day);
-
-    if (logDate == today) {
-      return 'Today';
-    } else if (logDate == today.subtract(const Duration(days: 1))) {
-      return 'Yesterday';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
   }
 
   Widget _buildActionButtons() {

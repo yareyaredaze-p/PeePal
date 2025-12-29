@@ -1,4 +1,5 @@
 import '../models/hydration_recommendation.dart';
+import '../models/pee_log.dart';
 import 'database_service.dart';
 import '../ml/feature_extractor.dart';
 import '../ml/decision_tree_trainer.dart';
@@ -51,5 +52,80 @@ class MLService {
       final features = _featureExtractor.extractFeatures(logs);
       await _trainer.trainAndSave(features, userId);
     }
+  }
+
+  /// Get statistics for the home screen graph
+  Future<Map<String, double>> getRecentStats(int userId) async {
+    final logs = await _db.getPeeLogs(userId);
+    if (logs.isEmpty) {
+      return {'sinceLast': 0.0, 'averageInterval': 0.0, 'count': 0};
+    }
+
+    // Sort logs by timestamp ascending
+    final sortedLogs = List<PeeLog>.from(logs)
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    final lastLog = sortedLogs.last;
+    final sinceLast =
+        DateTime.now().difference(lastLog.timestamp).inMinutes / 60.0;
+
+    // Calculate average interval of last 10 pees
+    double averageIntervalHours = 0.0;
+    int count = 0;
+    if (sortedLogs.length > 1) {
+      final lastLogs = sortedLogs.length > 11
+          ? sortedLogs.sublist(sortedLogs.length - 11)
+          : sortedLogs;
+
+      double totalMinutes = 0;
+      int intervals = 0;
+      for (int i = 1; i < lastLogs.length; i++) {
+        totalMinutes += lastLogs[i].timestamp
+            .difference(lastLogs[i - 1].timestamp)
+            .inMinutes;
+        intervals++;
+      }
+      if (intervals > 0) {
+        averageIntervalHours = (totalMinutes / intervals) / 60.0;
+      }
+      count = sortedLogs.length;
+    }
+
+    return {
+      'sinceLast': sinceLast,
+      'averageInterval': averageIntervalHours,
+      'count': count.toDouble(),
+    };
+  }
+
+  /// Get a list of future water intake recommendations
+  Future<List<Map<String, dynamic>>> getFutureRecommendations(
+    int userId,
+  ) async {
+    final logs = await _db.getPeeLogs(userId);
+    if (logs.length < 10) {
+      return []; // Return empty to indicate "Training"
+    }
+
+    final stats = await getRecentStats(userId);
+    final averageIntervalHours = stats['averageInterval'] ?? 3.0;
+
+    // Fallback to 3 hours if average is suspicious
+    final interval = (averageIntervalHours > 0.5 && averageIntervalHours < 8.0)
+        ? averageIntervalHours
+        : 3.0;
+
+    final List<Map<String, dynamic>> recommendations = [];
+    final now = DateTime.now();
+
+    // Generate 4 recommendations for today
+    for (int i = 1; i <= 4; i++) {
+      final recommendTime = now.add(
+        Duration(minutes: (interval * 60 * i).toInt()),
+      );
+      recommendations.add({'time': recommendTime, 'amount': '250ml'});
+    }
+
+    return recommendations;
   }
 }
