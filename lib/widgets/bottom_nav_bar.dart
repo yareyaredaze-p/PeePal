@@ -26,36 +26,69 @@ class GlassBottomNavBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(AppTheme.spacingM),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(35),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Container(
-            height: 70,
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppTheme.glassSurface.withValues(alpha: 0.3),
-                  AppTheme.glassSurface.withValues(alpha: 0.15),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(35),
-              border: Border.all(color: AppTheme.glassBorder, width: 1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(
-                _items.length,
-                (index) => _NavBarItem(
-                  icon: _items[index].icon,
-                  label: _items[index].label,
-                  isSelected: currentIndex == index,
-                  onTap: () => onTap(index),
+          child: Stack(
+            children: [
+              // Liquid Background
+              Container(
+                height: 70,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingM,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.0, 0.4, 1.0],
+                    colors: [
+                      AppTheme.glassSurface.withValues(alpha: 0.35),
+                      AppTheme.glassSurface.withValues(alpha: 0.15),
+                      AppTheme.glassSurface.withValues(alpha: 0.1),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(35),
+                  border: Border.all(
+                    color: AppTheme.glassBorder.withValues(alpha: 0.5),
+                    width: 1.5,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(
+                    _items.length,
+                    (index) => _NavBarItem(
+                      icon: _items[index].icon,
+                      label: _items[index].label,
+                      isSelected: currentIndex == index,
+                      onTap: () => onTap(index),
+                    ),
+                  ),
                 ),
               ),
-            ),
+
+              // Top Highlight Edge
+              Positioned(
+                top: 0,
+                left: 35,
+                right: 35,
+                height: 1.5,
+                child: IgnorePointer(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.white.withValues(alpha: 0.0),
+                          Colors.white.withValues(alpha: 0.4),
+                          Colors.white.withValues(alpha: 0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -25,52 +25,87 @@ class PrimaryButton extends StatelessWidget {
     Widget button = ClipRRect(
       borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppTheme.glassSurface.withValues(alpha: 0.3),
-                AppTheme.glassSurface.withValues(alpha: 0.15),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
-            border: Border.all(color: AppTheme.glassBorder, width: 1),
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: isLoading ? null : onPressed,
-              borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
-              child: Center(
-                child: isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppTheme.textPrimary,
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Stack(
+          children: [
+            // Liquid Background
+            Container(
+              height: 56,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: const [0.0, 0.4, 1.0],
+                  colors: [
+                    AppTheme.glassSurface.withValues(alpha: 0.4),
+                    AppTheme.glassSurface.withValues(alpha: 0.2),
+                    AppTheme.glassSurface.withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+                border: Border.all(
+                  color: AppTheme.glassBorder.withValues(alpha: 0.5),
+                  width: 1.5,
+                ),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: isLoading ? null : onPressed,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+                  child: Center(
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppTheme.textPrimary,
+                              ),
+                            ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (icon != null) ...[
+                                Icon(
+                                  icon,
+                                  color: AppTheme.textPrimary,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: AppTheme.spacingS),
+                              ],
+                              Text(text, style: AppTheme.buttonText),
+                            ],
                           ),
-                        ),
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (icon != null) ...[
-                            Icon(icon, color: AppTheme.textPrimary, size: 20),
-                            const SizedBox(width: AppTheme.spacingS),
-                          ],
-                          Text(text, style: AppTheme.buttonText),
-                        ],
-                      ),
+                  ),
+                ),
               ),
             ),
-          ),
+
+            // Top Shine Edge
+            Positioned(
+              top: 0,
+              left: 24,
+              right: 24,
+              height: 1.5,
+              child: IgnorePointer(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.0),
+                        Colors.white.withValues(alpha: 0.4),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

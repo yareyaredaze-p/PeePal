@@ -18,9 +18,10 @@ class AppTheme {
   static const Color backgroundMedium = Color(0xFF1A3A5C);
 
   // Glass Effect Colors
-  static const Color glassSurface = Color(0x26FFFFFF); // 15% white
-  static const Color glassBorder = Color(0x4DFFFFFF); // 30% white
-  static const Color glassHighlight = Color(0x1AFFFFFF); // 10% white
+  static const Color glassSurface = Color(0x33FFFFFF); // 20% white
+  static const Color glassBorder = Color(0x66FFFFFF); // 40% white
+  static const Color glassHighlight = Color(0x4DFFFFFF); // 30% white
+  static const Color glassShine = Color(0x99FFFFFF); // 60% white
 
   // Text Colors
   static const Color textPrimary = Color(0xFFFFFFFF);
@@ -43,7 +44,27 @@ class AppTheme {
   static const LinearGradient glassGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0x33FFFFFF), Color(0x0DFFFFFF)],
+    colors: [Color(0x40FFFFFF), Color(0x0DFFFFFF)],
+  );
+
+  static const LinearGradient liquidGlassGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: [0.0, 0.5, 1.0],
+    colors: [
+      Color(0x4DFFFFFF), // 30% white
+      Color(0x1AFFFFFF), // 10% white
+      Color(0x0DFFFFFF), // 5% white
+    ],
+  );
+
+  static const LinearGradient liquidShineGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0x80FFFFFF), // 50% white
+      Color(0x00FFFFFF), // Transparent
+    ],
   );
 
   // ============== SHADOWS ==============
