@@ -44,9 +44,12 @@ class _ListScreenState extends State<ListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OceanBackground(
-        child: SafeArea(
+    return OceanBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // App bar
@@ -76,18 +79,16 @@ class _ListScreenState extends State<ListScreen> {
                         ),
                       ),
               ),
-
-              // Bottom navigation
-              GlassBottomNavBar(
-                currentIndex: 1,
-                onTap: (index) {
-                  if (index != 1) {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
             ],
           ),
+        ),
+        bottomNavigationBar: GlassBottomNavBar(
+          currentIndex: 1,
+          onTap: (index) {
+            if (index != 1) {
+              Navigator.of(context).pop();
+            }
+          },
         ),
       ),
     );
@@ -104,7 +105,7 @@ class _ListScreenState extends State<ListScreen> {
               Text('P', style: AppTheme.logoStyle.copyWith(fontSize: 28)),
               Text('²', style: AppTheme.logoStyle.copyWith(fontSize: 14)),
               const SizedBox(width: AppTheme.spacingS),
-              const Text('PeePal', style: AppTheme.headingMedium),
+              const Text('PeePal', style: AppTheme.logoStyle),
             ],
           ),
           IconButton(

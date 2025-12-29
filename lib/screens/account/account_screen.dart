@@ -111,9 +111,12 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OceanBackground(
-        child: SafeArea(
+    return OceanBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // App bar
@@ -150,23 +153,23 @@ class _AccountScreenState extends State<AccountScreen> {
                               onPressed: _handleSignOut,
                               icon: Icons.logout,
                             ),
-                            const SizedBox(height: 100), // Space for nav bar
+                            const SizedBox(
+                              height: 120,
+                            ), // Extra space for nav bar
                           ],
                         ),
                       ),
               ),
-
-              // Bottom navigation
-              GlassBottomNavBar(
-                currentIndex: 3,
-                onTap: (index) {
-                  if (index != 3) {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
             ],
           ),
+        ),
+        bottomNavigationBar: GlassBottomNavBar(
+          currentIndex: 3,
+          onTap: (index) {
+            if (index != 3) {
+              Navigator.of(context).pop();
+            }
+          },
         ),
       ),
     );
@@ -183,7 +186,7 @@ class _AccountScreenState extends State<AccountScreen> {
               Text('P', style: AppTheme.logoStyle.copyWith(fontSize: 28)),
               Text('²', style: AppTheme.logoStyle.copyWith(fontSize: 14)),
               const SizedBox(width: AppTheme.spacingS),
-              const Text('PeePal', style: AppTheme.headingMedium),
+              const Text('PeePal', style: AppTheme.logoStyle),
             ],
           ),
           IconButton(

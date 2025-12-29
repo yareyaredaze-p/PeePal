@@ -101,7 +101,7 @@ class AppTheme {
     fontSize: 28,
     fontWeight: FontWeight.w700,
     color: textPrimary,
-    letterSpacing: 0.5,
+    letterSpacing: 28 * -0.05,
   );
 
   static const TextStyle headingMedium = TextStyle(
@@ -109,6 +109,7 @@ class AppTheme {
     fontSize: 22,
     fontWeight: FontWeight.w600,
     color: textPrimary,
+    letterSpacing: 22 * -0.05,
   );
 
   static const TextStyle headingSmall = TextStyle(
@@ -116,6 +117,7 @@ class AppTheme {
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: textPrimary,
+    letterSpacing: 18 * -0.05,
   );
 
   static const TextStyle bodyLarge = TextStyle(
@@ -123,6 +125,7 @@ class AppTheme {
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: textPrimary,
+    letterSpacing: 16 * -0.05,
   );
 
   static const TextStyle bodyMedium = TextStyle(
@@ -130,6 +133,7 @@ class AppTheme {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: textPrimary,
+    letterSpacing: 14 * -0.05,
   );
 
   static const TextStyle bodySmall = TextStyle(
@@ -137,6 +141,7 @@ class AppTheme {
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: textSecondary,
+    letterSpacing: 12 * -0.05,
   );
 
   static const TextStyle buttonText = TextStyle(
@@ -144,7 +149,7 @@ class AppTheme {
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: textPrimary,
-    letterSpacing: 0.5,
+    letterSpacing: 16 * -0.05,
   );
 
   static const TextStyle caption = TextStyle(
@@ -152,6 +157,7 @@ class AppTheme {
     fontSize: 11,
     fontWeight: FontWeight.w300,
     color: textMuted,
+    letterSpacing: 11 * -0.05,
   );
 
   // ============== THEME DATA ==============

@@ -146,9 +146,10 @@ class _LogPeeScreenState extends State<LogPeeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OceanBackground(
-        child: SafeArea(
+    return OceanBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
           child: Column(
             children: [
               // App bar

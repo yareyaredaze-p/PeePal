@@ -143,9 +143,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OceanBackground(
-        child: SafeArea(
+    return OceanBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // App bar
@@ -182,20 +185,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               // Action buttons
                               _buildActionButtons(),
-                              const SizedBox(height: 100), // Space for nav bar
+                              const SizedBox(
+                                height: 120,
+                              ), // Extra space for nav bar
                             ],
                           ),
                         ),
                       ),
               ),
-
-              // Bottom navigation
-              GlassBottomNavBar(
-                currentIndex: _currentNavIndex,
-                onTap: _onNavTap,
-              ),
             ],
           ),
+        ),
+        bottomNavigationBar: GlassBottomNavBar(
+          currentIndex: _currentNavIndex,
+          onTap: _onNavTap,
         ),
       ),
     );
@@ -213,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text('P', style: AppTheme.logoStyle.copyWith(fontSize: 28)),
               Text('²', style: AppTheme.logoStyle.copyWith(fontSize: 14)),
               const SizedBox(width: AppTheme.spacingS),
-              const Text('PeePal', style: AppTheme.headingMedium),
+              const Text('PeePal', style: AppTheme.logoStyle),
             ],
           ),
           IconButton(

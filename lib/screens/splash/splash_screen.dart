@@ -104,9 +104,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OceanBackground(
-        child: SafeArea(
+    return OceanBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
           child: Center(
             child: AnimatedBuilder(
               animation: _animationController,

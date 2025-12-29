@@ -63,9 +63,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: OceanBackground(
-        child: SafeArea(
+    return OceanBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true,
+        body: SafeArea(
+          bottom: false,
           child: Column(
             children: [
               // App bar
@@ -94,23 +97,23 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
                             // Hydration trend
                             _buildTrendSection(),
-                            const SizedBox(height: 100), // Space for nav bar
+                            const SizedBox(
+                              height: 120,
+                            ), // Extra space for nav bar
                           ],
                         ),
                       ),
               ),
-
-              // Bottom navigation
-              GlassBottomNavBar(
-                currentIndex: 2,
-                onTap: (index) {
-                  if (index != 2) {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
             ],
           ),
+        ),
+        bottomNavigationBar: GlassBottomNavBar(
+          currentIndex: 2,
+          onTap: (index) {
+            if (index != 2) {
+              Navigator.of(context).pop();
+            }
+          },
         ),
       ),
     );
