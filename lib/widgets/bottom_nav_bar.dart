@@ -26,7 +26,7 @@ class GlassBottomNavBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(AppTheme.spacingM),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(35),
+        borderRadius: BorderRadius.circular(25),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
@@ -100,25 +100,12 @@ class _NavBarItem extends StatelessWidget {
           color: isSelected
               ? AppTheme.glassSurface.withValues(alpha: 0.3)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+          borderRadius: BorderRadius.circular(35),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isSelected ? AppTheme.textPrimary : AppTheme.textMuted,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: AppTheme.caption.copyWith(
-                color: isSelected ? AppTheme.textPrimary : AppTheme.textMuted,
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w300,
-              ),
-            ),
-          ],
+        child: Icon(
+          icon,
+          size: 28,
+          color: isSelected ? AppTheme.textPrimary : AppTheme.textMuted,
         ),
       ),
     );

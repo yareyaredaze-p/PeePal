@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: AppTheme.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+              borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
             ),
           ),
         );
@@ -182,17 +182,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               // Recent logs
                               _buildRecentLogsSection(),
                               const SizedBox(height: AppTheme.spacingL),
-
-                              // Action buttons
-                              _buildActionButtons(),
-                              const SizedBox(
-                                height: 120,
-                              ), // Extra space for nav bar
                             ],
                           ),
                         ),
                       ),
               ),
+
+              // Action buttons (Sticky)
+              _buildActionButtons(),
+              const SizedBox(height: 110), // Space for nav bar
             ],
           ),
         ),
@@ -299,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Recent', style: AppTheme.headingSmall),
-        const SizedBox(height: AppTheme.spacingM),
+        const SizedBox(height: 5),
         if (_recentLogs.isEmpty)
           GlassContainer(
             child: Center(
@@ -349,56 +347,84 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppTheme.spacingM,
-        vertical: AppTheme.spacingS,
+        vertical: AppTheme.spacingM,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Icon(Icons.water_drop, color: AppTheme.lightBlue, size: 20),
-              const SizedBox(width: AppTheme.spacingS),
-              Text(
-                'Today, At ${log.formattedTime}',
-                style: AppTheme.bodyMedium,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightBlue.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                ),
+                child: const Icon(
+                  Icons.water_drop,
+                  color: AppTheme.lightBlue,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingM),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('At ${log.formattedTime}', style: AppTheme.bodyMedium),
+                  Text(_formatDate(log.timestamp), style: AppTheme.caption),
+                ],
               ),
             ],
           ),
-          // Volume display removed as per new requirements
         ],
       ),
     );
   }
 
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final logDate = DateTime(date.year, date.month, date.day);
+
+    if (logDate == today) {
+      return 'Today';
+    } else if (logDate == today.subtract(const Duration(days: 1))) {
+      return 'Yesterday';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
+  }
+
   Widget _buildActionButtons() {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: GlassContainer(
-            onTap: _logPeeNow,
-            backgroundColor: AppTheme.primaryBlue,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.add, color: AppTheme.textPrimary),
-                const SizedBox(width: AppTheme.spacingXS),
-                Text('Log Pee Now', style: AppTheme.buttonText),
-              ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+      child: Row(
+        children: [
+          Expanded(
+            child: GlassContainer(
+              onTap: _logPeeNow,
+              backgroundColor: AppTheme.primaryBlue,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.add, color: AppTheme.textPrimary),
+                  const SizedBox(width: AppTheme.spacingXS),
+                  Text('Log Pee', style: AppTheme.buttonText),
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: AppTheme.spacingM),
-        SizedBox(
-          width: double.infinity,
-          child: GlassContainer(
-            onTap: _logOldPee,
-            child: Center(
-              child: Text('Log Old Pee', style: AppTheme.buttonText),
+          const SizedBox(width: AppTheme.spacingM),
+          Expanded(
+            child: GlassContainer(
+              onTap: _logOldPee,
+              child: Center(
+                child: Text('Log Old Pee', style: AppTheme.buttonText),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
