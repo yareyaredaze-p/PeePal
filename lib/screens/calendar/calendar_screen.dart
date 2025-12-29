@@ -151,13 +151,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Text('P', style: AppTheme.logoStyle.copyWith(fontSize: 28)),
-              Text('²', style: AppTheme.logoStyle.copyWith(fontSize: 14)),
-              const SizedBox(width: AppTheme.spacingS),
-              const Text('PeePal', style: AppTheme.logoStyle),
-            ],
+          Image.asset(
+            'assets/images/PeePal_logo_v.png',
+            height: 40,
+            fit: BoxFit.contain,
           ),
           IconButton(
             icon: const Icon(

@@ -102,13 +102,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: AppTheme.spacingXL),
 
-                // Logo
-                _buildLogo(),
-                const SizedBox(height: AppTheme.spacingM),
-
-                Text(
-                  'PeePal',
-                  style: AppTheme.logoStyle.copyWith(fontSize: 32),
+                // App logo image
+                Image.asset(
+                  'assets/images/PeePal_logo_h.png',
+                  height: 80,
+                  fit: BoxFit.contain,
                 ),
 
                 const SizedBox(height: AppTheme.spacingXL),
@@ -253,40 +251,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLogo() {
-    return Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Text(
-            'P',
-            style: AppTheme.logoStyle.copyWith(
-              fontSize: 52,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Positioned(
-            top: 6,
-            right: 6,
-            child: Text(
-              '²',
-              style: AppTheme.logoStyle.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

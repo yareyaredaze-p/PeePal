@@ -26,7 +26,7 @@ class GlassBottomNavBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(AppTheme.spacingM),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+        borderRadius: BorderRadius.circular(35),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
@@ -41,7 +41,7 @@ class GlassBottomNavBar extends StatelessWidget {
                   AppTheme.glassSurface.withValues(alpha: 0.15),
                 ],
               ),
-              borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+              borderRadius: BorderRadius.circular(35),
               border: Border.all(color: AppTheme.glassBorder, width: 1),
             ),
             child: Row(
@@ -85,9 +85,11 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      behavior: HitTestBehavior.opaque,
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+      splashColor: AppTheme.lightBlue.withValues(alpha: 0.1),
+      highlightColor: Colors.transparent,
       child: AnimatedContainer(
         duration: AppTheme.animationFast,
         padding: const EdgeInsets.symmetric(

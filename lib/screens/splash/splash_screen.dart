@@ -123,17 +123,11 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
-                  _buildLogo(),
-                  const SizedBox(height: AppTheme.spacingXL),
-
-                  // App name
-                  Text(
-                    'PeePal',
-                    style: AppTheme.logoStyle.copyWith(
-                      fontSize: 48,
-                      letterSpacing: 2,
-                    ),
+                  // App logo image
+                  Image.asset(
+                    'assets/images/PeePal_logo_v.png',
+                    height: 120,
+                    fit: BoxFit.contain,
                   ),
                   const SizedBox(height: AppTheme.spacingXXL),
 
@@ -157,43 +151,6 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLogo() {
-    // P² logo matching UI reference
-    return Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Main P
-          Text(
-            'P',
-            style: AppTheme.logoStyle.copyWith(
-              fontSize: 80,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          // Superscript 2
-          Positioned(
-            top: 10,
-            right: 10,
-            child: Text(
-              '²',
-              style: AppTheme.logoStyle.copyWith(
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

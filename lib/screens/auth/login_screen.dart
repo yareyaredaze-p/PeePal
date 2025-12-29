@@ -81,14 +81,11 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: AppTheme.spacingXXL),
 
-                // Logo section
-                _buildLogo(),
-                const SizedBox(height: AppTheme.spacingM),
-
-                // App name
-                Text(
-                  'PeePal',
-                  style: AppTheme.logoStyle.copyWith(fontSize: 36),
+                // App logo image
+                Image.asset(
+                  'assets/images/PeePal_logo_h.png',
+                  height: 100,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: AppTheme.spacingXXL),
 
@@ -194,40 +191,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLogo() {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Text(
-            'P',
-            style: AppTheme.logoStyle.copyWith(
-              fontSize: 64,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: Text(
-              '²',
-              style: AppTheme.logoStyle.copyWith(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

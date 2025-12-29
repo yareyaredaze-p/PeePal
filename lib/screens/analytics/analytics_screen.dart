@@ -128,11 +128,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             icon: const Icon(Icons.arrow_back_ios, color: AppTheme.textPrimary),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          const Expanded(
-            child: Text(
-              'Analytics',
-              style: AppTheme.headingMedium,
-              textAlign: TextAlign.center,
+          Expanded(
+            child: Image.asset(
+              'assets/images/PeePal_logo_v.png',
+              height: 40,
+              fit: BoxFit.contain,
             ),
           ),
           const SizedBox(width: 48),
