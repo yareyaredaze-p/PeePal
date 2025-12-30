@@ -218,85 +218,106 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Widget _buildLogItem(PeeLog log) {
-    return Dismissible(
-      key: Key('pee_log_${log.id}'),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: AppTheme.spacingL),
-        decoration: BoxDecoration(
-          color: AppTheme.error.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+    return RepaintBoundary(
+      child: Dismissible(
+        key: Key('pee_log_${log.id}'),
+        direction: DismissDirection.endToStart,
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: AppTheme.spacingL),
+          decoration: BoxDecoration(
+            color: AppTheme.error.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+          ),
+          child: const Icon(Icons.delete, color: AppTheme.error),
         ),
-        child: const Icon(Icons.delete, color: AppTheme.error),
-      ),
-      confirmDismiss: (direction) async {
-        return await showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialog(
-                backgroundColor: AppTheme.backgroundDark,
-                title: const Text('Delete Log?', style: AppTheme.headingSmall),
-                content: const Text(
-                  'This action cannot be undone.',
-                  style: AppTheme.bodyMedium,
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: Text(
-                      'Delete',
-                      style: TextStyle(color: AppTheme.error),
+        confirmDismiss: (direction) => _confirmDelete(),
+        onDismissed: (direction) async {
+          await _deleteLog(log);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingM,
+            vertical: AppTheme.spacingM,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.lightBlue.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
                     ),
+                    child: Icon(
+                      Icons.water_drop,
+                      color: AppTheme.lightBlue,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: AppTheme.spacingM),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'At ${log.formattedTime}',
+                        style: AppTheme.bodyMedium,
+                      ),
+                      Text(_formatDate(log.timestamp), style: AppTheme.caption),
+                    ],
                   ),
                 ],
               ),
-            ) ??
-            false;
-      },
-      onDismissed: (direction) async {
-        await PeeLogService.instance.deleteLog(log.id!, widget.userId);
-        _loadLogs();
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingM,
-          vertical: AppTheme.spacingM,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppTheme.lightBlue.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.water_drop,
-                    color: AppTheme.lightBlue,
-                    size: 20,
-                  ),
+              IconButton(
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppTheme.lightBlue,
+                  size: 20,
                 ),
-                const SizedBox(width: AppTheme.spacingM),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('At ${log.formattedTime}', style: AppTheme.bodyMedium),
-                    Text(_formatDate(log.timestamp), style: AppTheme.caption),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                onPressed: () async {
+                  final confirm = await _confirmDelete();
+                  if (confirm) {
+                    await _deleteLog(log);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<bool> _confirmDelete() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: AppTheme.backgroundDark,
+            title: const Text('Delete Log?', style: AppTheme.headingSmall),
+            content: const Text(
+              'This action cannot be undone.',
+              style: AppTheme.bodyMedium,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Delete', style: TextStyle(color: AppTheme.error)),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future<void> _deleteLog(PeeLog log) async {
+    await PeeLogService.instance.deleteLog(log.id!, widget.userId);
+    _loadLogs();
   }
 
   String _formatDate(DateTime date) {

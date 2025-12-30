@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../../config/themes/app_theme.dart';
 
 import '../../widgets/ocean_background.dart';
@@ -23,52 +24,150 @@ class _LogPeeScreenState extends State<LogPeeScreen> {
   bool _isLoading = false;
 
   Future<void> _selectDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 30)),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppTheme.primaryBlue,
-              onPrimary: AppTheme.textPrimary,
-              surface: AppTheme.backgroundDark,
-              onSurface: AppTheme.textPrimary,
-            ),
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      DateTime? tempPicked;
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (context) => Container(
+          height: 250,
+          color: const Color(0xFF2C2C2E), // iOS Dark Gray
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  CupertinoButton(
+                    child: const Text('Done'),
+                    onPressed: () {
+                      if (tempPicked != null) {
+                        setState(() => _selectedDate = tempPicked!);
+                      }
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: _selectedDate,
+                  minimumDate: DateTime.now().subtract(
+                    const Duration(days: 30),
+                  ),
+                  maximumDate: DateTime.now(),
+                  onDateTimeChanged: (val) {
+                    tempPicked = val;
+                  },
+                ),
+              ),
+            ],
           ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() => _selectedDate = picked);
+        ),
+      );
+    } else {
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate,
+        firstDate: DateTime.now().subtract(const Duration(days: 30)),
+        lastDate: DateTime.now(),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: const ColorScheme.dark(
+                primary: AppTheme.primaryBlue,
+                onPrimary: AppTheme.textPrimary,
+                surface: AppTheme.backgroundDark,
+                onSurface: AppTheme.textPrimary,
+              ),
+            ),
+            child: child!,
+          );
+        },
+      );
+      if (picked != null) {
+        setState(() => _selectedDate = picked);
+      }
     }
   }
 
   Future<void> _selectTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppTheme.primaryBlue,
-              onPrimary: AppTheme.textPrimary,
-              surface: AppTheme.backgroundDark,
-              onSurface: AppTheme.textPrimary,
-            ),
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      Duration tempTime = Duration(
+        hours: _selectedTime.hour,
+        minutes: _selectedTime.minute,
+      );
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (context) => Container(
+          height: 250,
+          color: const Color(0xFF2C2C2E),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    child: const Text('Cancel'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  CupertinoButton(
+                    child: const Text('Done'),
+                    onPressed: () {
+                      setState(() {
+                        _selectedTime = TimeOfDay(
+                          hour:
+                              tempTime.inHours %
+                              24, // Handle potential overflow
+                          minute: tempTime.inMinutes % 60,
+                        );
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+              Expanded(
+                child: CupertinoTimerPicker(
+                  mode: CupertinoTimerPickerMode.hm,
+                  initialTimerDuration: Duration(
+                    hours: _selectedTime.hour,
+                    minutes: _selectedTime.minute,
+                  ),
+                  onTimerDurationChanged: (val) {
+                    tempTime = val;
+                  },
+                ),
+              ),
+            ],
           ),
-          child: child!,
-        );
-      },
-    );
+        ),
+      );
+    } else {
+      final picked = await showTimePicker(
+        context: context,
+        initialTime: _selectedTime,
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: const ColorScheme.dark(
+                primary: AppTheme.primaryBlue,
+                onPrimary: AppTheme.textPrimary,
+                surface: AppTheme.backgroundDark,
+                onSurface: AppTheme.textPrimary,
+              ),
+            ),
+            child: child!,
+          );
+        },
+      );
 
-    if (picked != null) {
-      setState(() => _selectedTime = picked);
+      if (picked != null) {
+        setState(() => _selectedTime = picked);
+      }
     }
   }
 

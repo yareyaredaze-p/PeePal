@@ -9,29 +9,31 @@ class OceanBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/ocean_background.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
+    return RepaintBoundary(
       child: Container(
-        // Dark gradient overlay for better text readability
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.black.withValues(alpha: 0.3),
-              Colors.black.withValues(alpha: 0.5),
-              Colors.black.withValues(alpha: 0.7),
-            ],
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/ocean_background.png'),
+            fit: BoxFit.cover,
           ),
         ),
-        child: child,
+        child: Container(
+          // Dark gradient overlay for better text readability
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withValues(alpha: 0.3),
+                Colors.black.withValues(alpha: 0.5),
+                Colors.black.withValues(alpha: 0.7),
+              ],
+            ),
+          ),
+          child: child,
+        ),
       ),
     );
   }
