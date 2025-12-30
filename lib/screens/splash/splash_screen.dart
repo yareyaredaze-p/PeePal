@@ -126,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen>
                   // App logo image
                   Image.asset(
                     'assets/images/PeePal_logo_h.png',
-                    height: 80,
+                    height: 180,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: AppTheme.spacingXXL),
