@@ -101,21 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _logPeeNow() async {
     setState(() => _isLoading = true);
     try {
+      final DateTime now = DateTime.now();
       await PeeLogService.instance.addPeeLog(
         userId: widget.userId,
-        timestamp: DateTime.now(),
+        timestamp: now,
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Pee logged successfully!'),
-            backgroundColor: AppTheme.success,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-            ),
-          ),
-        );
+        _showLoggedDialog(now);
         _loadData();
       }
     } catch (e) {
@@ -126,6 +118,81 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _showLoggedDialog(DateTime timestamp) {
+    final hours = timestamp.hour.toString().padLeft(2, '0');
+    final minutes = timestamp.minute.toString().padLeft(2, '0');
+    final day = timestamp.day.toString().padLeft(2, '0');
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final month = months[timestamp.month - 1];
+    final year = timestamp.year;
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      builder: (context) => Center(
+        child: GlassContainer(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingXXL,
+            vertical: AppTheme.spacingL,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'LOGGED',
+                style: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 2,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingS),
+              Text(
+                '$hours : $minutes',
+                style: AppTheme.headingLarge.copyWith(
+                  fontSize: 64,
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.italic,
+                  letterSpacing: 2,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingS),
+              Text(
+                '$day $month $year',
+                style: AppTheme.bodyMedium.copyWith(
+                  color: AppTheme.lightBlue,
+                  fontStyle: FontStyle.italic,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Auto-dismiss after 2 seconds
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   Future<void> _logOldPee() async {
@@ -183,7 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               // Recommended Water Intake
                               _buildRecommendedWaterIntakeSection(),
-                              const SizedBox(height: AppTheme.spacingL),
+                              const SizedBox(
+                                height: 80,
+                              ), // Extra space for action buttons
                             ],
                           ),
                         ),
@@ -328,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 40,
                 decoration: BoxDecoration(
                   border: Border.all(color: AppTheme.glassBorder, width: 1.5),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                  borderRadius: BorderRadius.zero,
                 ),
                 child: FractionallySizedBox(
                   alignment: Alignment.centerLeft,
@@ -336,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppTheme.lightBlue.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+                      borderRadius: BorderRadius.zero,
                     ),
                   ),
                 ),

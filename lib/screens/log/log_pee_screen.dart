@@ -91,17 +91,7 @@ class _LogPeeScreenState extends State<LogPeeScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Pee log added successfully!'),
-          backgroundColor: AppTheme.success,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
-          ),
-        ),
-      );
-      Navigator.of(context).pop(true);
+      _showLoggedDialog(timestamp);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -115,6 +105,83 @@ class _LogPeeScreenState extends State<LogPeeScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  void _showLoggedDialog(DateTime timestamp) {
+    final hours = timestamp.hour.toString().padLeft(2, '0');
+    final minutes = timestamp.minute.toString().padLeft(2, '0');
+    final day = timestamp.day.toString().padLeft(2, '0');
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final month = months[timestamp.month - 1];
+    final year = timestamp.year;
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: GlassContainer(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingXXL,
+            vertical: AppTheme.spacingL,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'LOGGED',
+                style: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 2,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingS),
+              Text(
+                '$hours : $minutes',
+                style: AppTheme.headingLarge.copyWith(
+                  fontSize: 64,
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.italic,
+                  letterSpacing: 2,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacingS),
+              Text(
+                '$day $month $year',
+                style: AppTheme.bodyMedium.copyWith(
+                  color: AppTheme.lightBlue,
+                  fontStyle: FontStyle.italic,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Auto-dismiss after 2 seconds and pop the screen
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        Navigator.of(context).pop(); // Close dialog
+        Navigator.of(context).pop(true); // Return to home with success
+      }
+    });
   }
 
   String get _formattedDate {

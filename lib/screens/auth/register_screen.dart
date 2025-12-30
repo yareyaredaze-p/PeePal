@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../config/themes/app_theme.dart';
 import '../../config/constants/app_constants.dart';
 import '../../widgets/ocean_background.dart';
-import '../../widgets/glass_container.dart';
+// import '../../widgets/glass_container.dart';
 import '../../widgets/primary_button.dart';
 import '../../services/auth_service.dart';
 import '../home/home_screen.dart';
@@ -112,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: AppTheme.spacingXL),
 
                 // Register form
-                GlassContainer(
+                Padding(
                   padding: const EdgeInsets.all(AppTheme.spacingL),
                   child: Form(
                     key: _formKey,

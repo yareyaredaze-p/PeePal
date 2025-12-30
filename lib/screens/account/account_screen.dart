@@ -367,7 +367,7 @@ class _AccountScreenState extends State<AccountScreen> {
               if (_modelInfo != null) ...[
                 const SizedBox(height: AppTheme.spacingM),
                 Text(
-                  'Model Details (for viva):',
+                  'Model Details :',
                   style: AppTheme.bodySmall.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

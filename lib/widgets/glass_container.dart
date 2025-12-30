@@ -22,7 +22,7 @@ class GlassContainer extends StatelessWidget {
     this.margin,
     this.width,
     this.height,
-    this.borderRadius = 0,
+    this.borderRadius = AppTheme.radiusSmall,
     this.blur = AppTheme.blurIntensity,
     this.backgroundColor,
     this.onTap,
@@ -93,7 +93,7 @@ class GlassCard extends StatelessWidget {
       padding: padding,
       margin: margin,
       blur: 10,
-      borderRadius: 0,
+      borderRadius: AppTheme.radiusSmall,
       onTap: onTap,
       child: child,
     );

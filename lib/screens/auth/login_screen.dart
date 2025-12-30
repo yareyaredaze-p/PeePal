@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/themes/app_theme.dart';
 import '../../widgets/ocean_background.dart';
-import '../../widgets/glass_container.dart';
+// import '../../widgets/glass_container.dart';
 import '../../widgets/primary_button.dart';
 import '../../services/auth_service.dart';
 import '../home/home_screen.dart';
@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: AppTheme.spacingXXL),
 
                 // Login form
-                GlassContainer(
+                Padding(
                   padding: const EdgeInsets.all(AppTheme.spacingL),
                   child: Form(
                     key: _formKey,
