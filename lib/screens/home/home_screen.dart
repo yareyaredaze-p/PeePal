@@ -67,7 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.of(context)
             .push(
               MaterialPageRoute(
-                builder: (context) => ListScreen(userId: widget.userId),
+                builder: (context) => ListScreen(
+                  userId: widget.userId,
+                  username: widget.username,
+                ),
               ),
             )
             .then((_) => _loadData());
@@ -76,7 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.of(context)
             .push(
               MaterialPageRoute(
-                builder: (context) => CalendarScreen(userId: widget.userId),
+                builder: (context) => CalendarScreen(
+                  userId: widget.userId,
+                  username: widget.username,
+                ),
               ),
             )
             .then((_) => _loadData());
@@ -411,7 +417,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          
                         ],
                       ),
                     ),

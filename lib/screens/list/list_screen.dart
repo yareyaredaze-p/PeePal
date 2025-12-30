@@ -5,12 +5,16 @@ import '../../widgets/glass_container.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../models/pee_log.dart';
 import '../../services/pee_log_service.dart';
+import '../home/home_screen.dart';
+import '../calendar/calendar_screen.dart';
+import '../account/account_screen.dart';
 
 /// List Screen - Chronological view of all pee logs grouped by date
 class ListScreen extends StatefulWidget {
   final int userId;
+  final String username;
 
-  const ListScreen({super.key, required this.userId});
+  const ListScreen({super.key, required this.userId, required this.username});
 
   @override
   State<ListScreen> createState() => _ListScreenState();
@@ -85,8 +89,38 @@ class _ListScreenState extends State<ListScreen> {
         bottomNavigationBar: GlassBottomNavBar(
           currentIndex: 1,
           onTap: (index) {
-            if (index != 1) {
-              Navigator.of(context).pop();
+            if (index == 1) return;
+            switch (index) {
+              case 0:
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(
+                      userId: widget.userId,
+                      username: widget.username,
+                    ),
+                  ),
+                );
+                break;
+              case 2:
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => CalendarScreen(
+                      userId: widget.userId,
+                      username: widget.username,
+                    ),
+                  ),
+                );
+                break;
+              case 3:
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => AccountScreen(
+                      userId: widget.userId,
+                      username: widget.username,
+                    ),
+                  ),
+                );
+                break;
             }
           },
         ),

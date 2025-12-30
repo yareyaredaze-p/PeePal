@@ -8,6 +8,9 @@ import '../../services/auth_service.dart';
 import '../../services/pee_log_service.dart';
 import '../../services/ml_service.dart';
 import '../auth/login_screen.dart';
+import '../home/home_screen.dart';
+import '../list/list_screen.dart';
+import '../calendar/calendar_screen.dart';
 
 /// Account Screen - User profile and settings
 class AccountScreen extends StatefulWidget {
@@ -166,8 +169,38 @@ class _AccountScreenState extends State<AccountScreen> {
         bottomNavigationBar: GlassBottomNavBar(
           currentIndex: 3,
           onTap: (index) {
-            if (index != 3) {
-              Navigator.of(context).pop();
+            if (index == 3) return;
+            switch (index) {
+              case 0:
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(
+                      userId: widget.userId,
+                      username: widget.username,
+                    ),
+                  ),
+                );
+                break;
+              case 1:
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => ListScreen(
+                      userId: widget.userId,
+                      username: widget.username,
+                    ),
+                  ),
+                );
+                break;
+              case 2:
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => CalendarScreen(
+                      userId: widget.userId,
+                      username: widget.username,
+                    ),
+                  ),
+                );
+                break;
             }
           },
         ),
@@ -199,13 +232,11 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _buildProfileCard() {
-    return GlassContainer(
-      padding: const EdgeInsets.all(AppTheme.spacingL),
+    return Padding(
+      padding: const EdgeInsets.all(AppTheme.spacingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Account', style: AppTheme.headingSmall),
-          const SizedBox(height: AppTheme.spacingL),
           Row(
             children: [
               // Avatar
