@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: AppTheme.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
             ),
           ),
         );
@@ -169,9 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               // Greeting
                               _buildGreeting(),
-                              const SizedBox(height: AppTheme.spacingL),
-
-                              const SizedBox(height: AppTheme.spacingL),
+                              const SizedBox(height: AppTheme.spacingXS),
 
                               // Recent logs (now includes graph)
                               _buildRecentLogsSection(),
@@ -243,7 +241,17 @@ class _HomeScreenState extends State<HomeScreen> {
           '$greeting,',
           style: AppTheme.bodyLarge.copyWith(color: AppTheme.textSecondary),
         ),
-        Text(widget.username, style: AppTheme.headingLarge),
+        Text(widget.username, style: AppTheme.headingMedium),
+        const SizedBox(height: AppTheme.spacingS),
+        Text(
+          'Stay hydrated! Your recent patterns look consistent. Keep logging your activity to help us provide better insights for your health.',
+          style: AppTheme.bodyMedium.copyWith(
+            color: AppTheme.textSecondary,
+            height: 1.5,
+          ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
       ],
     );
   }
@@ -258,14 +266,14 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Recent', style: AppTheme.headingMedium),
+            const Text('Recent', style: AppTheme.headingSmall),
             TextButton(
               onPressed: () => _onNavTap(1),
               child: const Text('View All'),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingS),
+        const SizedBox(height: AppTheme.spacingXS),
         GlassContainer(
           padding: const EdgeInsets.all(AppTheme.spacingM),
           child: Column(
@@ -346,7 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Recommended Water Intake', style: AppTheme.headingMedium),
+        const Text('Recommended Water Intake', style: AppTheme.headingSmall),
         const SizedBox(height: AppTheme.spacingM),
         if (_futureRecommendations.isEmpty)
           const GlassContainer(
@@ -366,30 +374,44 @@ class _HomeScreenState extends State<HomeScreen> {
                 final index = entry.key;
                 final rec = entry.value;
                 final DateTime time = rec['time'];
-                final String amount = rec['amount'];
 
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingL,
-                        vertical: AppTheme.spacingL,
-                      ),
+                      padding: const EdgeInsets.all(AppTheme.spacingM),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Today, At ${TimeOfDay.fromDateTime(time).format(context)}',
-                            style: AppTheme.headingMedium.copyWith(
-                              fontSize: 18,
-                            ),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.lightBlue.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.water_drop,
+                                  color: AppTheme.lightBlue,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: AppTheme.spacingM),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'At ${TimeOfDay.fromDateTime(time).format(context)}',
+                                    style: AppTheme.bodyMedium,
+                                  ),
+                                  const Text('Today', style: AppTheme.caption),
+                                ],
+                              ),
+                            ],
                           ),
-                          Text(
-                            amount,
-                            style: AppTheme.headingMedium.copyWith(
-                              fontSize: 18,
-                            ),
-                          ),
+                          
                         ],
                       ),
                     ),
@@ -397,6 +419,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Divider(
                         color: AppTheme.glassBorder.withValues(alpha: 0.5),
                         height: 1,
+                        indent: AppTheme.spacingM,
+                        endIndent: AppTheme.spacingM,
                       ),
                   ],
                 );
@@ -409,13 +433,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildActionButtons() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingM),
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingL),
       child: Row(
         children: [
           Expanded(
             child: GlassContainer(
+              onTap: _logOldPee,
+              borderRadius: AppTheme.radiusXLarge,
+              child: Center(
+                child: Text('Log Old Pee', style: AppTheme.buttonText),
+              ),
+            ),
+          ),
+          const SizedBox(width: AppTheme.spacingM),
+          Expanded(
+            child: GlassContainer(
               onTap: _logPeeNow,
               backgroundColor: AppTheme.primaryBlue,
+              borderRadius: AppTheme.radiusXLarge,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -423,15 +458,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: AppTheme.spacingXS),
                   Text('Log Pee', style: AppTheme.buttonText),
                 ],
-              ),
-            ),
-          ),
-          const SizedBox(width: AppTheme.spacingM),
-          Expanded(
-            child: GlassContainer(
-              onTap: _logOldPee,
-              child: Center(
-                child: Text('Log Old Pee', style: AppTheme.buttonText),
               ),
             ),
           ),

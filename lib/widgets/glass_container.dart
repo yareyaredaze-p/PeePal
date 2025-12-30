@@ -34,82 +34,28 @@ class GlassContainer extends StatelessWidget {
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Stack(
-          children: [
-            // Base Liquid Gradient Layer
-            Container(
-              width: width,
-              height: height,
-              padding: padding ?? const EdgeInsets.all(AppTheme.spacingM),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: const [0.0, 0.4, 1.0],
-                  colors: [
-                    (backgroundColor ?? AppTheme.glassSurface).withValues(
-                      alpha: 0.35,
-                    ),
-                    (backgroundColor ?? AppTheme.glassSurface).withValues(
-                      alpha: 0.15,
-                    ),
-                    (backgroundColor ?? AppTheme.glassSurface).withValues(
-                      alpha: 0.08,
-                    ),
-                  ],
+        child: Container(
+          width: width,
+          height: height,
+          padding: padding ?? const EdgeInsets.all(AppTheme.spacingM),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                (backgroundColor ?? AppTheme.glassSurface).withValues(
+                  alpha: 0.25,
                 ),
-                borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.all(
-                  color: AppTheme.glassBorder.withValues(alpha: 0.5),
-                  width: 1.5,
+                (backgroundColor ?? AppTheme.glassSurface).withValues(
+                  alpha: 0.1,
                 ),
-                boxShadow: AppTheme.glassShadow,
-              ),
-              child: child,
+              ],
             ),
-
-            // Specular Highlight (Liquid Shine)
-            Positioned.fill(
-              child: IgnorePointer(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0x33FFFFFF), // Brighter top-left
-                        Colors.transparent,
-                        Color(0x0A000000), // Subtle occlusion at bottom-right
-                      ],
-                      stops: [0.0, 0.5, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Thin Highlight Edge
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 1.5,
-              child: IgnorePointer(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.0),
-                        Colors.white.withValues(alpha: 0.5),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(color: AppTheme.glassBorder, width: 1),
+            boxShadow: AppTheme.glassShadow,
+          ),
+          child: child,
         ),
       ),
     );
