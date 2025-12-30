@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/themes/app_theme.dart';
+import '../../widgets/notification_popup.dart';
 import '../../widgets/ocean_background.dart';
 import '../../widgets/glass_container.dart';
 import '../../widgets/primary_button.dart';
@@ -11,6 +12,7 @@ import '../auth/login_screen.dart';
 import '../home/home_screen.dart';
 import '../list/list_screen.dart';
 import '../calendar/calendar_screen.dart';
+import '../../utils/premium_route.dart';
 
 /// Account Screen - User profile and settings
 class AccountScreen extends StatefulWidget {
@@ -87,7 +89,7 @@ class _AccountScreenState extends State<AccountScreen> {
       await AuthService.instance.logout();
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          PremiumPageRoute(page: const LoginScreen()),
           (route) => false,
         );
       }
@@ -173,8 +175,8 @@ class _AccountScreenState extends State<AccountScreen> {
             switch (index) {
               case 0:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(
+                  PremiumPageRoute(
+                    page: HomeScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -183,8 +185,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 break;
               case 1:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => ListScreen(
+                  PremiumPageRoute(
+                    page: ListScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -193,8 +195,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 break;
               case 2:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => CalendarScreen(
+                  PremiumPageRoute(
+                    page: CalendarScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -224,7 +226,7 @@ class _AccountScreenState extends State<AccountScreen> {
               Icons.notifications_outlined,
               color: AppTheme.textPrimary,
             ),
-            onPressed: () {},
+            onPressed: () => NotificationPopup.show(context),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/themes/app_theme.dart';
+import '../../widgets/notification_popup.dart';
 import '../../widgets/ocean_background.dart';
 import '../../widgets/glass_container.dart';
 import '../../widgets/bottom_nav_bar.dart';
@@ -8,6 +9,7 @@ import '../../services/pee_log_service.dart';
 import '../home/home_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../account/account_screen.dart';
+import '../../utils/premium_route.dart';
 
 /// List Screen - Chronological view of all pee logs grouped by date
 class ListScreen extends StatefulWidget {
@@ -93,8 +95,8 @@ class _ListScreenState extends State<ListScreen> {
             switch (index) {
               case 0:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(
+                  PremiumPageRoute(
+                    page: HomeScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -103,8 +105,8 @@ class _ListScreenState extends State<ListScreen> {
                 break;
               case 2:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => CalendarScreen(
+                  PremiumPageRoute(
+                    page: CalendarScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -113,8 +115,8 @@ class _ListScreenState extends State<ListScreen> {
                 break;
               case 3:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => AccountScreen(
+                  PremiumPageRoute(
+                    page: AccountScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -144,7 +146,7 @@ class _ListScreenState extends State<ListScreen> {
               Icons.notifications_outlined,
               color: AppTheme.textPrimary,
             ),
-            onPressed: () {},
+            onPressed: () => NotificationPopup.show(context),
           ),
         ],
       ),

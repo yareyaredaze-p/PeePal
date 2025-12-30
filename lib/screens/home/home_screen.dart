@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../widgets/notification_popup.dart';
 import '../../config/themes/app_theme.dart';
 import '../../widgets/ocean_background.dart';
 import '../../widgets/glass_container.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/bouncing_glass_button.dart';
 import '../../services/pee_log_service.dart';
 import '../../services/ml_service.dart';
+import '../../services/notification_service.dart';
 import '../log/log_pee_screen.dart';
 
 import '../list/list_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../account/account_screen.dart';
+import '../../utils/premium_route.dart';
 
 /// Home Screen - Main dashboard with hydration status and quick actions
 class HomeScreen extends StatefulWidget {
@@ -39,6 +43,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final stats = await MLService.instance.getRecentStats(widget.userId);
+      final recommendation = await MLService.instance.getRecommendation(
+        widget.userId,
+      );
+
+      if (recommendation.shouldDrinkWater) {
+        await NotificationService.instance.showNotification(
+          id: 1,
+          title: 'Hydration Alert',
+          body: 'DRINK WATER NOWW!!!!💧',
+        );
+      }
+
       final futureRecommendations = await MLService.instance
           .getFutureRecommendations(widget.userId);
 
@@ -66,8 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         Navigator.of(context)
             .push(
-              MaterialPageRoute(
-                builder: (context) => ListScreen(
+              PremiumPageRoute(
+                page: ListScreen(
                   userId: widget.userId,
                   username: widget.username,
                 ),
@@ -78,8 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         Navigator.of(context)
             .push(
-              MaterialPageRoute(
-                builder: (context) => CalendarScreen(
+              PremiumPageRoute(
+                page: CalendarScreen(
                   userId: widget.userId,
                   username: widget.username,
                 ),
@@ -89,9 +105,11 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 3:
         Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>
-                AccountScreen(userId: widget.userId, username: widget.username),
+          PremiumPageRoute(
+            page: AccountScreen(
+              userId: widget.userId,
+              username: widget.username,
+            ),
           ),
         );
         break;
@@ -197,9 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _logOldPee() async {
     final result = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (context) =>
-            LogPeeScreen(userId: widget.userId, isOldLog: true),
+      PremiumPageRoute(
+        page: LogPeeScreen(userId: widget.userId, isOldLog: true),
       ),
     );
 
@@ -289,9 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.notifications_outlined,
               color: AppTheme.textPrimary,
             ),
-            onPressed: () {
-              // TODO: Notifications
-            },
+            onPressed: () => NotificationPopup.show(context),
           ),
         ],
       ),
@@ -511,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         children: [
           Expanded(
-            child: GlassContainer(
+            child: BouncingGlassButton(
               onTap: _logOldPee,
               borderRadius: AppTheme.radiusXLarge,
               child: Center(
@@ -521,7 +536,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(width: AppTheme.spacingM),
           Expanded(
-            child: GlassContainer(
+            child: BouncingGlassButton(
               onTap: _logPeeNow,
               backgroundColor: AppTheme.primaryBlue,
               borderRadius: AppTheme.radiusXLarge,

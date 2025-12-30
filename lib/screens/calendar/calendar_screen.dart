@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../config/themes/app_theme.dart';
+import '../../widgets/notification_popup.dart';
 import '../../widgets/ocean_background.dart';
 import '../../widgets/glass_container.dart';
 import '../../widgets/bottom_nav_bar.dart';
@@ -9,6 +10,7 @@ import '../../services/pee_log_service.dart';
 import '../home/home_screen.dart';
 import '../list/list_screen.dart';
 import '../account/account_screen.dart';
+import '../../utils/premium_route.dart';
 
 /// Calendar Screen - Monthly view with activity highlights
 class CalendarScreen extends StatefulWidget {
@@ -148,8 +150,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
             switch (index) {
               case 0:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(
+                  PremiumPageRoute(
+                    page: HomeScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -158,8 +160,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 break;
               case 1:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => ListScreen(
+                  PremiumPageRoute(
+                    page: ListScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -168,8 +170,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 break;
               case 3:
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => AccountScreen(
+                  PremiumPageRoute(
+                    page: AccountScreen(
                       userId: widget.userId,
                       username: widget.username,
                     ),
@@ -199,7 +201,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               Icons.notifications_outlined,
               color: AppTheme.textPrimary,
             ),
-            onPressed: () {},
+            onPressed: () => NotificationPopup.show(context),
           ),
         ],
       ),
