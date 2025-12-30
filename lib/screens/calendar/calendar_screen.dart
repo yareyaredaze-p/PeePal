@@ -335,7 +335,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             children: [
               // Bar chart
               SizedBox(
-                height: 120,
+                height: 150,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
