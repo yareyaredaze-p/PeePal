@@ -9,6 +9,7 @@ import '../../services/pee_log_service.dart';
 import '../../services/ml_service.dart';
 import '../../services/notification_service.dart';
 import '../log/log_pee_screen.dart';
+import '../../widgets/pee_logged_dialog.dart';
 
 import '../list/list_screen.dart';
 import '../calendar/calendar_screen.dart';
@@ -125,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
         timestamp: now,
       );
       if (mounted) {
-        _showLoggedDialog(now);
+        PeeLoggedDialog.show(context, now);
         _loadData();
       }
     } catch (e) {
@@ -136,81 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  void _showLoggedDialog(DateTime timestamp) {
-    final hours = timestamp.hour.toString().padLeft(2, '0');
-    final minutes = timestamp.minute.toString().padLeft(2, '0');
-    final day = timestamp.day.toString().padLeft(2, '0');
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    final month = months[timestamp.month - 1];
-    final year = timestamp.year;
-
-    showDialog(
-      context: context,
-      barrierColor: Colors.black54,
-      builder: (context) => Center(
-        child: GlassContainer(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingXXL,
-            vertical: AppTheme.spacingL,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'LOGGED',
-                style: AppTheme.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingS),
-              Text(
-                '$hours : $minutes',
-                style: AppTheme.headingLarge.copyWith(
-                  fontSize: 64,
-                  fontWeight: FontWeight.w300,
-                  fontStyle: FontStyle.italic,
-                  letterSpacing: 2,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacingS),
-              Text(
-                '$day $month $year',
-                style: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.lightBlue,
-                  fontStyle: FontStyle.italic,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    // Auto-dismiss after 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-    });
   }
 
   Future<void> _logOldPee() async {
