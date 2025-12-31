@@ -191,18 +191,21 @@ class _LogPeeScreenState extends State<LogPeeScreen> {
 
       if (!mounted) return;
 
-      PeeLoggedDialog.show(
-        context,
-        timestamp,
-      ).then((_) => Navigator.of(context).pop(true));
+      await PeeLoggedDialog.show(context, timestamp);
+
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: AppTheme.error,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppTheme.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

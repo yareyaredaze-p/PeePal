@@ -26,68 +26,11 @@ class PeeLoggedDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timeStr = TimeOfDay.fromDateTime(timestamp).format(context);
-    final dateStr =
-        '${_month(timestamp.month)} ${timestamp.day}, ${timestamp.year}';
-
-    return Center(
-      child: GlassContainer(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingXXL,
-          vertical: AppTheme.spacingXL,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacingM),
-              decoration: BoxDecoration(
-                color: AppTheme.success.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppTheme.success.withValues(alpha: 0.5),
-                  width: 2,
-                ),
-              ),
-              child: const Icon(
-                Icons.check_rounded,
-                color: AppTheme.success,
-                size: 40,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingL),
-            Text(
-              'Peee Logged!',
-              style: AppTheme.headingMedium.copyWith(
-                color: AppTheme.textPrimary,
-                decoration: TextDecoration.none,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingS),
-            Text(
-              'at $timeStr',
-              style: AppTheme.headingLarge.copyWith(
-                fontSize: 32,
-                color: AppTheme.textPrimary,
-                decoration: TextDecoration.none,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacingXS),
-            Text(
-              dateStr,
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondary,
-                decoration: TextDecoration.none,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _month(int month) {
-    const months = [
+    final hours = timestamp.hour.toString().padLeft(2, '0');
+    final minutes = timestamp.minute.toString().padLeft(2, '0');
+    final day = timestamp.day.toString().padLeft(2, '0');
+    final year = timestamp.year;
+    final months = [
       '',
       'Jan',
       'Feb',
@@ -102,6 +45,48 @@ class PeeLoggedDialog extends StatelessWidget {
       'Nov',
       'Dec',
     ];
-    return months[month];
+    final month = months[timestamp.month];
+
+    return Center(
+      child: GlassContainer(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingXXL,
+          vertical: AppTheme.spacingL,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'LOGGED',
+              style: AppTheme.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                letterSpacing: 2,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingS),
+            Text(
+              '$hours : $minutes',
+              style: AppTheme.headingLarge.copyWith(
+                fontSize: 64,
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+                letterSpacing: 2,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingS),
+            Text(
+              '$day $month $year',
+              style: AppTheme.bodyMedium.copyWith(
+                color: AppTheme.lightBlue,
+                fontStyle: FontStyle.italic,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
